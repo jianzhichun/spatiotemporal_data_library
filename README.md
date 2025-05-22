@@ -2,6 +2,19 @@
 
 # spatiotemporal_data_library
 
+## PyPI
+
+[![PyPI version](https://img.shields.io/pypi/v/spatiotemporal_data_library.svg)](https://pypi.org/project/spatiotemporal_data_library/)
+
+To publish:
+
+```bash
+python -m build
+python -m twine upload dist/*
+```
+
+See [PyPI project page](https://pypi.org/project/spatiotemporal_data_library/) for more info. 
+
 ## Introduction
 
 `spatiotemporal_data_library` is a Python library for unified access to multi-source spatiotemporal Earth observation data, supporting major meteorological and oceanographic datasets such as ERA5, PO.DAAC (e.g., CYGNSS, OSCAR), SMAP RSS, and SFMR. Through a unified interface, users can easily search, download, parse, and standardize various remote sensing and reanalysis data.
@@ -101,16 +114,3 @@ pytest spatiotemporal_data_library/test_spatiotemporal_data_library.py
 ## Contribution & Feedback
 
 Issues, PRs, and suggestions via email are welcome.
-
-## PyPI
-
-[![PyPI version](https://img.shields.io/pypi/v/spatiotemporal_data_library.svg)](https://pypi.org/project/spatiotemporal_data_library/)
-
-To publish:
-
-```bash
-python -m build
-python -m twine upload dist/*
-```
-
-See [PyPI project page](https://pypi.org/project/spatiotemporal_data_library/) for more info. 
