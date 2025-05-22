@@ -1,0 +1,27 @@
+/* Custom styles */
+.sd-card {
+    margin-bottom: 1rem;
+}
+
+.sd-card-header {
+    background-color: var(--color-brand-primary);
+    color: white;
+}
+
+.sd-card-body {
+    padding: 1rem;
+}
+
+/* Code block styling */
+.highlight {
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+/* Example section styling */
+.example-section {
+    background-color: var(--color-background-secondary);
+    padding: 1rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+} 
