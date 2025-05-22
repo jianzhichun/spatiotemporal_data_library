@@ -25,7 +25,15 @@ setup(
         "netCDF4>=1.5"
     ],
     extras_require={
-        "test": ["pytest>=7.0"],
+        "test": [
+            "pytest>=7.0",
+            "pytest-cov>=4.0",
+            "xarray>=2022.0",
+            "pandas>=1.3",
+            "requests>=2.25",
+            "cdsapi>=0.5",
+            "netCDF4>=1.5"
+        ],
     },
     python_requires=">=3.8",
     include_package_data=True,
