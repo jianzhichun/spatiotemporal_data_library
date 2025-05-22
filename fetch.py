@@ -17,6 +17,7 @@ Example:
 import logging
 import datetime
 import xarray as xr
+from typing import Union
 from .adapters.era5 import ERA5Adapter
 from .adapters.podaac import NOAACygnssL2Adapter, OSCARAdapter, PoDAACAdapterBase
 from .adapters.smap_rss import SMAPRSSAdapter
@@ -33,8 +34,8 @@ DS_SFMR_HRD = "SFMR_HRD"
 
 def fetch_data(dataset_short_name: str,
                variables: list[str],
-               start_time: str | datetime.datetime,
-               end_time: str | datetime.datetime,
+               start_time: Union[str, datetime.datetime],
+               end_time: Union[str, datetime.datetime],
                bbox: list[float] = None,
                point: list[float] = None,
                **kwargs) -> xr.Dataset:
