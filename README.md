@@ -100,4 +100,17 @@ pytest spatiotemporal_data_library/test_spatiotemporal_data_library.py
 
 ## Contribution & Feedback
 
-Issues, PRs, and suggestions via email are welcome. 
+Issues, PRs, and suggestions via email are welcome.
+
+## PyPI
+
+[![PyPI version](https://img.shields.io/pypi/v/spatiotemporal_data_library.svg)](https://pypi.org/project/spatiotemporal_data_library/)
+
+To publish:
+
+```bash
+python -m build
+python -m twine upload dist/*
+```
+
+See [PyPI project page](https://pypi.org/project/spatiotemporal_data_library/) for more info. 

@@ -10,6 +10,11 @@ from .base import DataSourceAdapter
 CACHE_DIR = Path.home() / ".spatiotemporal_data_cache"
 
 class SFMRAdapter(DataSourceAdapter):
+    """
+    Adapter for SFMR (Stepped Frequency Microwave Radiometer) wind and rain data.
+
+    Handles authentication, request building, download, parsing, and standardization for SFMR datasets.
+    """
     # 对于 ASCII V1/V2 [8]
     ASCII_V1_COLS = ["Date", "Time", "Lat", "Lon", "Sfc_WS", "RR"]
     ASCII_V2_COLS = ["Date", "Time", "Lat", "Lon", "Sfc_WS", "RR"]
@@ -22,50 +27,86 @@ class SFMRAdapter(DataSourceAdapter):
         "date_yyyymmdd": "DATE"
     }
     def _map_variables(self, standardized_vars):
+        """
+        Map standardized variable names to SFMR native variable names.
+        Args:
+            standardized_vars (list[str]): List of standardized variable names.
+        Returns:
+            list[str]: List of native variable names.
+        """
         return
     def _authenticate(self):
-        logging.info("SFMR HRD 数据: 通常可公开访问，无特定 API 密钥认证。Type 3 数据请检查数据政策。")
+        """
+        SFMR HRD data is usually public; no authentication required.
+        Logs info about data policy for Type 3 data.
+        """
+        logging.info("SFMR HRD data: usually public, no specific API key required. Check data policy for Type 3 data.")
     def _build_request_params(self):
+        """
+        Build request parameters (URL, filename, file_type) for SFMR download.
+        Returns:
+            dict: Request parameters for download.
+        Raises:
+            ValueError: If required parameters are missing.
+        """
         storm_name = self.kwargs.get('storm_name')
         year_str = str(self.kwargs.get('year', self.start_time.year))
         mission_id = self.kwargs.get('mission_id')
         if not storm_name or not year_str:
-            raise ValueError("SFMR 需要在 kwargs 中提供 'storm_name' 和 'year'。")
+            raise ValueError("SFMR requires 'storm_name' and 'year' in kwargs.")
         file_type = self.kwargs.get('sfmr_file_type', 'netcdf').lower()
         filename_stem = self.kwargs.get('filename_stem')
         if not filename_stem and mission_id:
             filename_stem = f"NOAA_SFMR{mission_id}"
         if not filename_stem:
-            raise ValueError("对于 SFMR，请在 kwargs 中提供 'mission_id' (例如 '20190828H1') 或 'filename_stem' (例如 'NOAA_SFMR20190828H1')。")
+            raise ValueError("For SFMR, provide 'mission_id' (e.g. '20190828H1') or 'filename_stem' (e.g. 'NOAA_SFMR20190828H1') in kwargs.")
         if file_type == 'netcdf':
             filename = f"{filename_stem}.nc"
         elif file_type.startswith('ascii'):
             filename = f"{filename_stem}.dat.gz"
         else:
-            raise ValueError(f"不支持的 SFMR 文件类型: {file_type}")
+            raise ValueError(f"Unsupported SFMR file type: {file_type}")
         url = f"https://www.aoml.noaa.gov/hrd/Storm_pages/{storm_name.upper()}{year_str}/data/sfmr/{filename}"
         return {"url": url, "filename": filename, "file_type": file_type}
     def _fetch_raw_data(self, request_params):
+        """
+        Download SFMR data from NOAA HRD.
+        Args:
+            request_params (dict): Request parameters (URL, filename, file_type).
+        Returns:
+            Path: Path to the downloaded file.
+        Raises:
+            FileNotFoundError: If download fails.
+        """
         url = request_params["url"]
         filename = request_params["filename"]
         target_file = CACHE_DIR / filename
         if target_file.exists():
-            logging.info(f"在缓存中找到 SFMR 数据: {target_file}")
+            logging.info(f"Found SFMR data in cache: {target_file}")
             return target_file
-        logging.info(f"从以下位置下载 SFMR 数据: {url}")
+        logging.info(f"Downloading SFMR data from: {url}")
         try:
             response = requests.get(url, stream=True)
             response.raise_for_status()
             with open(target_file, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
-            logging.info(f"SFMR 数据已下载到 {target_file}")
+            logging.info(f"SFMR data downloaded to {target_file}")
             return target_file
         except requests.exceptions.RequestException as e:
-            logging.error(f"从 {url} 下载 SFMR 数据时出错: {e}")
+            logging.error(f"Error downloading SFMR data from {url}: {e}")
             if target_file.exists(): target_file.unlink()
-            raise FileNotFoundError(f"无法从 {url} 下载 SFMR 数据。检查 URL 和可用性。")
+            raise FileNotFoundError(f"Failed to download SFMR data from {url}. Check URL and availability.")
     def _parse_data(self, raw_data_path):
+        """
+        Parse SFMR NetCDF or ASCII file into an xarray.Dataset.
+        Args:
+            raw_data_path (Path): Path to the downloaded file.
+        Returns:
+            xarray.Dataset: Parsed dataset.
+        Raises:
+            Exception: If parsing fails.
+        """
         file_type = self.kwargs.get('sfmr_file_type', 'netcdf').lower()
         try:
             if file_type == 'netcdf':
@@ -81,12 +122,19 @@ class SFMRAdapter(DataSourceAdapter):
                 rename_map_ascii = {'Sfc_WS': 'SWS', 'RR': 'SRR', 'Lat':'LAT', 'Lon':'LON', 'Time':'TIME_int', 'Date':'DATE_int'}
                 ds = ds.rename({k:v for k,v in rename_map_ascii.items() if k in ds})
             else:
-                raise ValueError(f"不支持的 SFMR 文件类型: {file_type}")
+                raise ValueError(f"Unsupported SFMR file type: {file_type}")
             return ds
         except Exception as e:
-            logging.error(f"解析 SFMR 文件 {raw_data_path} (类型: {file_type}) 时出错: {e}")
+            logging.error(f"Error parsing SFMR file {raw_data_path} (type: {file_type}): {e}")
             raise
     def _standardize_data(self, dataset: xr.Dataset) -> xr.Dataset:
+        """
+        Standardize SFMR dataset: rename variables and coordinates to standard names.
+        Args:
+            dataset (xarray.Dataset): Raw dataset.
+        Returns:
+            xarray.Dataset: Standardized dataset.
+        """
         rename_vars = {}
         for std_name, native_name in self.NETCDF_VAR_MAP.items():
             if native_name in dataset and std_name != native_name:

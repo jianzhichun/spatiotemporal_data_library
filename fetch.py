@@ -1,5 +1,18 @@
 """
-主入口：fetch_data
+Main entry point for spatiotemporal_data_library: fetch_data
+
+This module provides a unified interface to fetch and standardize multi-source spatiotemporal Earth observation data, including ERA5, PO.DAAC (CYGNSS, OSCAR), SMAP RSS, and SFMR datasets.
+
+Example:
+    >>> from spatiotemporal_data_library import fetch_data
+    >>> ds = fetch_data(
+    ...     dataset_short_name="ECMWF_ERA5",
+    ...     variables=["10m_u_component_of_wind", "10m_v_component_of_wind"],
+    ...     start_time="2023-01-01T00:00:00Z",
+    ...     end_time="2023-01-01T03:00:00Z",
+    ...     bbox=[-5, 50, 0, 52]
+    ... )
+    >>> print(ds)
 """
 import logging
 import datetime
@@ -26,7 +39,35 @@ def fetch_data(dataset_short_name: str,
                point: list[float] = None,
                **kwargs) -> xr.Dataset:
     """
-    从指定的数据集获取时空数据。
+    Fetch spatiotemporal data from a specified dataset and return a standardized xarray.Dataset.
+
+    Supports ERA5, PO.DAAC (CYGNSS, OSCAR), SMAP RSS, SFMR, etc. via a unified interface.
+
+    Args:
+        dataset_short_name (str): Short name of the dataset (e.g., "ECMWF_ERA5", "NOAA_CYGNSS_L2_V1.2").
+        variables (list[str]): List of standardized variable names to fetch.
+        start_time (str or datetime.datetime): Start time (ISO string or datetime object).
+        end_time (str or datetime.datetime): End time (ISO string or datetime object).
+        bbox (list[float], optional): Geographic bounding box [min_lon, min_lat, max_lon, max_lat].
+        point (list[float], optional): Single point [lon, lat].
+        **kwargs: Adapter-specific parameters (e.g., pressure_level, storm_name, mission_id, etc.).
+
+    Returns:
+        xarray.Dataset: Standardized dataset containing the requested variables and coordinates.
+
+    Raises:
+        ValueError: If the dataset_short_name is not supported.
+        Exception: For any errors during data fetching or processing.
+
+    Example:
+        >>> ds = fetch_data(
+        ...     dataset_short_name="ECMWF_ERA5",
+        ...     variables=["10m_u_component_of_wind", "10m_v_component_of_wind"],
+        ...     start_time="2023-01-01T00:00:00Z",
+        ...     end_time="2023-01-01T03:00:00Z",
+        ...     bbox=[-5, 50, 0, 52]
+        ... )
+        >>> print(ds)
     """
     logging.info(f"正在为 {dataset_short_name} 获取变量 {variables} 的数据")
 

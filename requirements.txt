@@ -5,3 +5,4 @@ cdsapi>=0.5
 netCDF4>=1.5
 pytest>=7.0
 # 如需 PO.DAAC 支持，请手动安装 podaac-data-downloader (命令行工具) 
+sphinx>=7.0 
