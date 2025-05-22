@@ -1,0 +1,7 @@
+xarray>=2022.0
+pandas>=1.3
+requests>=2.25
+cdsapi>=0.5
+netCDF4>=1.5
+pytest>=7.0
+# 如需 PO.DAAC 支持，请手动安装 podaac-data-downloader (命令行工具) 

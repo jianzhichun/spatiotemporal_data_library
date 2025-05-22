@@ -1,0 +1,4 @@
+include README.md
+include requirements.txt
+include test_spatiotemporal_data_library.py
+recursive-include adapters *.py 
