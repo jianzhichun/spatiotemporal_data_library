@@ -7,26 +7,37 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write  # 用于部署到 GitHub Pages
+
 jobs:
   build-docs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取完整历史用于版本信息
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.x'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install .[test]
-        pip install sphinx
+        pip install sphinx furo sphinx-copybutton sphinx-design sphinx-intl
+
     - name: Build docs
       run: |
         sphinx-build -b html docs docs/_build/html
+        sphinx-build -b html -D language=zh_CN docs docs/_build/html/zh_CN
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       if: github.event_name == 'push' && contains(['main', 'master'], github.ref_name)
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_build/html 
+        publish_dir: docs/_build/html
+        commit_message: "docs: update documentation" 

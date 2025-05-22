@@ -1,15 +1,22 @@
 .. spatiotemporal_data_library documentation master file
 
-spatiotemporal_data_library
-==========================
-
-A Python library for unified access to multi-source spatiotemporal Earth observation data (ERA5, PO.DAAC, SMAP, SFMR, etc.)
+Welcome to Spatiotemporal Data Library's documentation!
+====================================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    api
+   examples
+   contributing
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 Installation
 ------------
