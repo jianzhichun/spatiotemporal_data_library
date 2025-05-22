@@ -17,7 +17,7 @@ Example:
 import logging
 import datetime
 import xarray as xr
-from typing import Union
+from typing import Union, List
 from .adapters.era5 import ERA5Adapter
 from .adapters.podaac import NOAACygnssL2Adapter, OSCARAdapter, PoDAACAdapterBase
 from .adapters.smap_rss import SMAPRSSAdapter
@@ -33,11 +33,11 @@ DS_SFMR_HRD = "SFMR_HRD"
 
 
 def fetch_data(dataset_short_name: str,
-               variables: list[str],
+               variables: List[str],
                start_time: Union[str, datetime.datetime],
                end_time: Union[str, datetime.datetime],
-               bbox: list[float] = None,
-               point: list[float] = None,
+               bbox: List[float] = None,
+               point: List[float] = None,
                **kwargs) -> xr.Dataset:
     """
     Fetch spatiotemporal data from a specified dataset and return a standardized xarray.Dataset.
