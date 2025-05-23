@@ -50,4 +50,6 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'pandas': ('https://pandas.pydata.org/docs/', None),
-} 
+}
+
+autodoc_mock_imports = ["xarray", "pandas", "cdsapi", "netCDF4"] 
