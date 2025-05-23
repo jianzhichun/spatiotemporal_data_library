@@ -35,7 +35,7 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'created'
+    if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
