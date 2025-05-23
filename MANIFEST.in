@@ -2,5 +2,5 @@ include README.md
 include README_zh.md
 include LICENSE
 include requirements.txt
-recursive-include spatiotemporal_data_library *.py
+include test_spatiotemporal_data_library.py
 recursive-include adapters *.py 
