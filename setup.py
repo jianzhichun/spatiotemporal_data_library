@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="spatiotemporal_data_library",
-    version="0.1.0",
+    version="0.1.1",
     description="A Python library for unified access to multi-source spatiotemporal Earth observation data (ERA5, PO.DAAC, SMAP, SFMR, etc.)",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
